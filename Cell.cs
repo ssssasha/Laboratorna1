@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Laboratorna1_Excel_
+namespace LabaExcel
 {
     class Cell
     {
@@ -16,22 +16,22 @@ namespace Laboratorna1_Excel_
         public List<Cell> pointersToThis = new List<Cell>();
         public List<Cell> referencesFromThis = new List<Cell>();
         public List<Cell> newReferencesFromThis = new List<Cell>();
-        public Cell(int row, int column)
+        public Cell(int r, int c)
         {
-            this.row = row;
-            this.column = column;
-            name = NumberConverter.To26System(column) + Convert.ToString(row);
+            row = r;
+            column = c;
+            name = NumberConverter.To26System(c) + Convert.ToString(r);
             value = "0";
             expression = "";
         }
         public void setCell(string expr, string val, List<Cell> references, List<Cell> pointers)
         {
-            value = val;
-            expression = expr;
-            referencesFromThis.Clear();
-            referencesFromThis.AddRange(references);
-            pointersToThis.Clear();
-            pointersToThis.AddRange(pointers);
+           this.value = val;
+           this.expression = expr;
+           this.referencesFromThis.Clear();
+           this.referencesFromThis.AddRange(references);
+           this.pointersToThis.Clear();
+           this.pointersToThis.AddRange(pointers);
         }
         public string getName()
         {
@@ -39,15 +39,16 @@ namespace Laboratorna1_Excel_
         }
         public bool CheckLoop(List<Cell> list)
         {
-            foreach(Cell cell in list){
+            foreach (Cell cell in list)
+            {
                 if (cell.name == name)
                     return false;
             }
-            foreach(Cell point in pointersToThis)
+            foreach (Cell point in pointersToThis)
             {
-                foreach(Cell cell in list)
+                foreach (Cell cell in list)
                 {
-                    if(cell.name == point.name)
+                    if (cell.name == point.name)
                     {
                         return false;
                     }
@@ -61,7 +62,7 @@ namespace Laboratorna1_Excel_
         }
         public void AddPointersAndReferences()
         {
-            foreach(Cell point in newReferencesFromThis)
+            foreach (Cell point in newReferencesFromThis)
             {
                 point.pointersToThis.Add(this);
             }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Laboratorna1_Excel_
+namespace LabaExcel
 {
     public struct Index
     {
@@ -29,17 +29,17 @@ namespace Laboratorna1_Excel_
         }
         public static Index From26System(string x)
         {
-            Index ans = new TableEditor.Index();
+            Index ans = new LabaExcel.Index();
             ans.column = 0;
             ans.row = 0;
-            for(int i=0; i<x.Length; i++)
+            for (int i = 0; i < x.Length; i++)
             {
-                if(x[i] >= 64 && x[i] < 91)
+                if (x[i] >= 64 && x[i] < 91)
                 {
                     ans.column *= 26;
                     ans.column += (x[i]) - 64;
                 }
-                else if(x[i]> 47 && x[i] < 58)
+                else if (x[i] > 47 && x[i] < 58)
                 {
                     ans.row *= 10;
                     ans.row += x[i] - 48;

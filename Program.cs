@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Laboratorna1_Excel_
+namespace LabaExcel
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace Laboratorna1_Excel_
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MyExcel());
+            Application.Run(new Form1());
         }
     }
 }

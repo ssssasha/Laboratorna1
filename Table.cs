@@ -7,9 +7,9 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.IO;
 
-namespace Laboratorna1_Excel_
+namespace LabaExcel
 {
-    public class Table
+    class Table
     {
         private const int defaultCol = 30;
         private const int defaultRow = 10;
@@ -17,7 +17,6 @@ namespace Laboratorna1_Excel_
         public int rowCount;
         public static List<List<Cell>> grid = new List<List<Cell>>();
         public Dictionary<string, string> dictionary = new Dictionary<string, string>();
-        Table table = new Table();
         public Table()
         {
             setTable(defaultCol, defaultRow);
@@ -27,10 +26,10 @@ namespace Laboratorna1_Excel_
             Clear();
             colCount = col;
             rowCount = row;
-            for(int i=0; i<rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
                 List<Cell> newRow = new List<Cell>();
-                for(int j=0; j< colCount; j++)
+                for (int j = 0; j < colCount; j++)
                 {
                     newRow.Add(new Cell(i, j));
                     dictionary.Add(newRow.Last().getName(), "");
@@ -40,7 +39,7 @@ namespace Laboratorna1_Excel_
         }
         public void Clear()
         {
-            foreach(List<Cell>list in grid)
+            foreach (List<Cell> list in grid)
             {
                 list.Clear();
             }
@@ -49,14 +48,14 @@ namespace Laboratorna1_Excel_
             rowCount = 0;
             colCount = 0;
         }
-        public void ChangeCellWithAllPointers(int row, int col, string expression, System.Windows.Forms.DataGridView dataGridView1)
+        public void ChangeCellWithAllPointers(int row, int col, string expression, DataGridView dataGridView1)
         {
             grid[row][col].DeletePointersAndReferences();
             grid[row][col].expression = expression;
             grid[row][col].newReferencesFromThis.Clear();
             if (expression != "")
             {
-                if (expression[0] != "=")
+                if (expression[0] != '=')
                 {
                     grid[row][col].value = expression;
                     dictionary[FullName(row, col)] = expression;
@@ -74,7 +73,7 @@ namespace Laboratorna1_Excel_
             }
             if (!grid[row][col].CheckLoop(grid[row][col].newReferencesFromThis))
             {
-                System.Windows.Forms.MessageBox.Show("There is a loop! Change the expression");
+                MessageBox.Show("There is a loop! Change the expression");
                 grid[row][col].expression = "";
                 grid[row][col].value = "0";
                 dataGridView1[col, row].Value = "0";
@@ -84,7 +83,7 @@ namespace Laboratorna1_Excel_
             string val = Calculate(newExpression);
             if (val == "Error")
             {
-                System.Windows.Forms.MessageBox.Show("Error in cell" + FullName(row, col));
+                MessageBox.Show("Error in cell" + FullName(row, col));
                 grid[row][col].expression = "";
                 grid[row][col].value = "0";
                 dataGridView1[col, row].Value = "0";
@@ -108,7 +107,7 @@ namespace Laboratorna1_Excel_
             string newExpression = ConvertReferences(cell.row, cell.column, cell.expression);
             newExpression = newExpression.Remove(0, 1);
             string Value = Calculate(newExpression);
-            if(Value == "Error")
+            if (Value == "Error")
             {
                 MessageBox.Show("Error in cell" + cell.getName());
                 cell.expression = "";
@@ -119,9 +118,9 @@ namespace Laboratorna1_Excel_
             grid[cell.row][cell.column].value = Value;
             dictionary[FullName(cell.row, cell.column)] = Value;
             dataGridView1[cell.column, cell.row].Value = Value;
-            foreach(Cell point in cell.pointersToThis)
+            foreach (Cell point in cell.pointersToThis)
             {
-                if(!RefreshCellAndPointers(point, dataGridView1))
+                if (!RefreshCellAndPointers(point, dataGridView1))
                 {
                     return false;
                 }
@@ -130,7 +129,7 @@ namespace Laboratorna1_Excel_
         }
         public void RefreshReferences()
         {
-            foreach(List<Cell> list in grid)
+            foreach (List<Cell> list in grid)
             {
                 foreach (Cell cell in list)
                 {
@@ -138,14 +137,14 @@ namespace Laboratorna1_Excel_
                     {
                         cell.referencesFromThis.Clear();
                     }
-                    if(cell.newReferencesFromThis != null)
+                    if (cell.newReferencesFromThis != null)
                     {
                         cell.newReferencesFromThis.Clear();
                     }
-                    if(cell.expression == "")
+                    if (cell.expression == "")
                         continue;
                     string newExpression = cell.expression;
-                    if(cell.expression[0] == "=")
+                    if (cell.expression[0] == '=')
                     {
                         newExpression = ConvertReferences(cell.row, cell.column, cell.expression);
                         cell.referencesFromThis.AddRange(cell.newReferencesFromThis);
@@ -158,7 +157,7 @@ namespace Laboratorna1_Excel_
             string cellPattern = @"[A-Z]+[0-9]+";
             Regex regex = new Regex(cellPattern, RegexOptions.IgnoreCase);
             Index nums;
-            foreach(Match match in regex.Matches(expr))
+            foreach (Match match in regex.Matches(expr))
             {
                 if (dictionary.ContainsKey(match.Value))
                 {
@@ -173,7 +172,7 @@ namespace Laboratorna1_Excel_
         public string referenceToValue(Match m)
         {
             if (dictionary.ContainsKey(m.Value))
-                if(dictionary[m.Value] == "")
+                if (dictionary[m.Value] == "")
                 {
                     return "0";
                 }
@@ -181,8 +180,8 @@ namespace Laboratorna1_Excel_
                 {
                     return dictionary[m.Value];
                 }
-                return m.Value;
-            
+            return m.Value;
+
         }
         public string Calculate(string expression)
         {
@@ -190,9 +189,9 @@ namespace Laboratorna1_Excel_
             try
             {
                 result = Convert.ToString(Calculator.Evaluate(expression));
-                if(result == "∞")
+                if (result == "∞")
                 {
-                    result = "Dividion by zerro error";
+                    result = "Division by zerro error";
                 }
                 return result;
             }
@@ -204,22 +203,22 @@ namespace Laboratorna1_Excel_
         public void AddRow(DataGridView dataGridView1)
         {
             List<Cell> newRow = new List<Cell>();
-            for(int j = 0; j < colCount; j++)
+            for (int j = 0; j < colCount; j++)
             {
-                newRow.Add(Cell(rowCount, j));
+                newRow.Add(new LabaExcel.Cell(rowCount, j));
                 dictionary.Add(newRow.Last().getName(), "");
             }
             grid.Add(newRow);
             RefreshReferences();
-            foreach(List<Cell> list in grid)
+            foreach (List<Cell> list in grid)
             {
-                foreach(Cell cell in list)
+                foreach (Cell cell in list)
                 {
-                    if(cell.referencesFromThis != null)
+                    if (cell.referencesFromThis != null)
                     {
-                        foreach(Cell cellRef in cell.referencesFromThis)
+                        foreach (Cell cellRef in cell.referencesFromThis)
                         {
-                            if(cellRef.row == rowCount)
+                            if (cellRef.row == rowCount)
                             {
                                 if (!cellRef.pointersToThis.Contains(cell))
                                 {
@@ -230,7 +229,7 @@ namespace Laboratorna1_Excel_
                     }
                 }
             }
-            for(int j = 0; j < colCount; j++)
+            for (int j = 0; j < colCount; j++)
             {
                 ChangeCellWithAllPointers(rowCount, j, "", dataGridView1);
             }
@@ -276,15 +275,15 @@ namespace Laboratorna1_Excel_
         {
             List<Cell> lastRow = new List<Cell>();
             List<string> notEmptyCells = new List<string>();
-            if(rowCount == 0)
+            if (rowCount == 0)
             {
                 return false;
             }
             int currentCount = rowCount - 1;
-            for(int i=0; i < colCount; i++)
+            for (int i = 0; i < colCount; i++)
             {
                 string name = FullName(currentCount, i);
-                if(dictionary[name] != "0" && dictionary[name] != "" && dictionary[name] !=" ")
+                if (dictionary[name] != "0" && dictionary[name] != "" && dictionary[name] != " ")
                 {
                     notEmptyCells.Add(name);
                 }
@@ -296,16 +295,16 @@ namespace Laboratorna1_Excel_
             if (lastRow.Count != 0 || notEmptyCells.Count != 0)
             {
                 string errorMessage = "";
-                if(notEmptyCells.Count != 0)
+                if (notEmptyCells.Count != 0)
                 {
                     errorMessage = "There are not empty cells:";
                     errorMessage += string.Join(";", notEmptyCells.ToArray());
                     errorMessage += ' ';
                 }
-                if(lastRow.Count != 0)
+                if (lastRow.Count != 0)
                 {
                     errorMessage += "There are cells that point to cells from current row : ";
-                    foreach(Cell cell in lastRow)
+                    foreach (Cell cell in lastRow)
                     {
                         errorMessage += string.Join(";", cell.getName());
                         errorMessage += " ";
@@ -313,17 +312,17 @@ namespace Laboratorna1_Excel_
                 }
                 errorMessage += "Are you sure you want to delete this row?";
                 DialogResult result = MessageBox.Show(errorMessage, "Warning", MessageBoxButtons.YesNo);
-                if(result == DialogResult.No)
+                if (result == DialogResult.No)
                 {
                     return false;
                 }
             }
-            for(int i = 0; i < colCount; i++)
+            for (int i = 0; i < colCount; i++)
             {
                 string name = FullName(currentCount, i);
                 dictionary.Remove(name);
             }
-            foreach(Cell cell in lastRow)
+            foreach (Cell cell in lastRow)
             {
                 RefreshCellAndPointers(cell, dataGridView1);
             }
@@ -335,19 +334,19 @@ namespace Laboratorna1_Excel_
         {
             List<Cell> lastCol = new List<Cell>();
             List<string> notEmptyCells = new List<string>();
-            if(colCount == 0)
+            if (colCount == 0)
             {
                 return false;
             }
             int currentCount = colCount - 1;
-            for(int i = 0; i< rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
                 string name = FullName(i, currentCount);
-                if (dictionary[name] != "0" && dictionary[name] !=  "" && dictionary[name] != " ")
+                if (dictionary[name] != "0" && dictionary[name] != "" && dictionary[name] != " ")
                 {
                     notEmptyCells.Add(name);
                 }
-                if(grid[i][currentCount].pointersToThis.Count != 0)
+                if (grid[i][currentCount].pointersToThis.Count != 0)
                 {
                     lastCol.AddRange(grid[i][currentCount].pointersToThis);
                 }
@@ -375,7 +374,7 @@ namespace Laboratorna1_Excel_
                     return false;
                 }
             }
-            for( int i = 0; i < rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
                 string name = FullName(i, currentCount);
                 dictionary.Remove(name);
@@ -384,7 +383,7 @@ namespace Laboratorna1_Excel_
             {
                 RefreshCellAndPointers(cell, dataGridView1);
             }
-            for(int i = 0; i < rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
                 grid[i].RemoveAt(currentCount);
             }
@@ -395,12 +394,12 @@ namespace Laboratorna1_Excel_
         {
             for (int i = 0; i < r; i++)
             {
-                for(int j = 0; j < c; j++)
+                for (int j = 0; j < c; j++)
                 {
                     string index = streamReader.ReadLine();
                     string expression = streamReader.ReadLine();
                     string value = streamReader.ReadLine();
-                    if(expression != "")
+                    if (expression != "")
                     {
                         dictionary[index] = value;
                     }
@@ -411,10 +410,10 @@ namespace Laboratorna1_Excel_
                     int refCount = Convert.ToInt32(streamReader.ReadLine());
                     List<Cell> newRef = new List<Cell>();
                     string refer;
-                    for(int k=0; k < refCount; k++)
+                    for (int k = 0; k < refCount; k++)
                     {
                         refer = streamReader.ReadLine();
-                        if(NumberConverter.From26System(refer).row < rowCount &&
+                        if (NumberConverter.From26System(refer).row < rowCount &&
                             NumberConverter.From26System(refer).column < colCount)
                         {
                             newRef.Add(grid[NumberConverter.From26System(refer).row][NumberConverter.From26System(refer).column]);
@@ -423,7 +422,7 @@ namespace Laboratorna1_Excel_
                     int pointCount = Convert.ToInt32(streamReader.ReadLine());
                     List<Cell> newPoint = new List<Cell>();
                     string point;
-                    for(int k = 0; k < pointCount; k++)
+                    for (int k = 0; k < pointCount; k++)
                     {
                         point = streamReader.ReadLine();
                         newPoint.Add(grid[NumberConverter.From26System(point).row][NumberConverter.From26System(point).column]);
@@ -439,9 +438,9 @@ namespace Laboratorna1_Excel_
         {
             streamWriter.WriteLine(rowCount);
             streamWriter.WriteLine(colCount);
-            foreach(List<Cell> list in grid)
+            foreach (List<Cell> list in grid)
             {
-                foreach(Cell cell in list)
+                foreach (Cell cell in list)
                 {
                     streamWriter.WriteLine(cell.getName());
                     streamWriter.WriteLine(cell.expression);
@@ -458,14 +457,14 @@ namespace Laboratorna1_Excel_
                             streamWriter.WriteLine(refCell.getName());
                         }
                     }
-                    if(cell.pointersToThis == null)
+                    if (cell.pointersToThis == null)
                     {
                         streamWriter.WriteLine("0");
                     }
                     else
                     {
                         streamWriter.WriteLine(cell.pointersToThis.Count);
-                        foreach(Cell pointCell in cell.pointersToThis)
+                        foreach (Cell pointCell in cell.pointersToThis)
                         {
                             streamWriter.WriteLine(pointCell.getName());
                         }
